@@ -27,7 +27,7 @@ class Gettext
 
     private static function getFile($locale)
     {
-        return sprintf('%s/%s/LC_MESSAGES/%s.', [self::$config['storage'], $locale, self::$config['domain']]);
+        return sprintf('%s/%s/LC_MESSAGES/%s.', self::$config['storage'], $locale, self::$config['domain']);
     }
 
     private static function getCache($locale)
@@ -159,8 +159,7 @@ class Gettext
 
         # Also, we will work with gettext/gettext library
         # because PHP gones crazy when mo files are updated
-
-        $path = dirname(self::getFile($current));
+        $path = dirname(self::getFile(self::$locale));
         $file = $path.'/'.self::$config['domain'];
 
         if (is_file($file.'.php')) {

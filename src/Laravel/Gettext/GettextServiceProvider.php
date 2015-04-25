@@ -48,7 +48,7 @@ class GettextServiceProvider extends ServiceProvider
         Gettext::setLocale(Session::get('locale'), Input::get('locale'));
         Gettext::load();
 
-        Session::set('locale', $current);
+        Session::set('locale', Gettext::getLocale());
     }
 
     /**
