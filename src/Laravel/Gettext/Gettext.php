@@ -178,7 +178,7 @@ class Gettext
     public static function setLocale($current, $new)
     {
         if (empty($current) || !in_array($current, self::$config['locales'])) {
-            $current = self::$config['default'];
+            $current = self::$config['locales'][0];
         }
 
         if ($new && ($new !== $current) && in_array($new, self::$config['locales'])) {
