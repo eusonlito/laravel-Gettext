@@ -66,20 +66,11 @@ return array(
     |
     | A array list with available locales to load
     |
+    | Default locale will the first in array list
+    |
     */
 
     'locales' => ['en_US', 'es_ES', 'it_IT', 'fr_FR'],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Available locales
-    |--------------------------------------------------------------------------
-    |
-    | A array list with available locales to load
-    |
-    */
-
-    'default' => 'en_US',
 
     /*
     |--------------------------------------------------------------------------
