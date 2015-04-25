@@ -17,37 +17,22 @@ use Gettext\Translator;
 
 class Gettext
 {
-    private static $dirs = ['app', 'resources'];
-    private static $storage = 'resources/gettext';
+    private static $config = [];
+    private static $locale;
 
-    public static function setDirectories($folders)
+    public static function setConfig(array $config)
     {
-        self::$dirs = (array)$dirs;
+        self::$config = $config;
     }
 
-    public static function setStorage($storage)
+    private static function getFile($locale)
     {
-        self::$storage = (array)$storage;
-    }
-
-    private static function storage()
-    {
-        return base_path(self::$storage);
-    }
-
-    private static function file($locale)
-    {
-        return self::storage().'/'.$locale.'/LC_MESSAGES/messages.';
-    }
-
-    private static function locales()
-    {
-        return array_keys(Config::get('app.locales'));
+        return sprintf('%s/%s/LC_MESSAGES/%s.', [self::$config['storage'], $locale, self::$config['domain']]);
     }
 
     private static function getCache($locale)
     {
-        if (is_file($file = self::file($locale).'po')) {
+        if (is_file($file = self::getFile($locale).'po')) {
             return Extractors\Po::fromFile($file);
         }
 
@@ -56,7 +41,7 @@ class Gettext
 
     private static function store($locale, $entries)
     {
-        $file = self::file($locale);
+        $file = self::getFile($locale);
         $dir = dirname($file);
 
         if (!is_dir($dir)) {
@@ -80,7 +65,7 @@ class Gettext
         $base = base_path();
         $entries = new Translations();
 
-        foreach (self::$dirs as $dir) {
+        foreach (self::$config['dirs'] as $dir) {
             $dir = $base.'/'.$dir;
 
             if (!is_dir($dir)) {
@@ -125,7 +110,7 @@ class Gettext
 
         $entries = clone self::scan();
 
-        if (is_file($file = self::file($locale).'mo')) {
+        if (is_file($file = self::getFile($locale).'mo')) {
             $entries->mergeWith(Extractors\Mo::fromFile($file));
         }
 
@@ -159,34 +144,7 @@ class Gettext
 
     public static function load()
     {
-        $locales = Config::get('app.locales');
-        $session = Session::get('locale');
-        $input = Input::get('locale');
-
-        if (empty($session) || !array_key_exists($session, $locales)) {
-            $session = Config::get('app.locale');
-        }
-
-        if ($input && ($input !== $session) && array_key_exists($input, $locales)) {
-            $session = $input;
-        }
-
-        Session::set('locale', $session);
-        App::setLocale($session);
-
-        if (array_key_exists($session, $locales)) {
-            $locale = $locales[$session].'.UTF-8';
-        } else {
-            reset($locales);
-
-            $locale = current($locales).'.UTF-8';
-
-            if (php_sapi_name() === 'cli') {
-                echo sprintf('Warning: You must have installed "%s" locales on your environment for a proper generation of the translations.', implode(', ', $locales)).PHP_EOL.PHP_EOL;
-            }
-        }
-
-        $domain = 'messages';
+        $locale = $self::$locale.'.UTF-8';
 
         # IMPORTANT: locale must be installed in server!
         # sudo locale-gen es_ES.UTF-8
@@ -195,15 +153,15 @@ class Gettext
         putenv('LC_ALL='.$locale);
         setlocale(LC_ALL, $locale);
 
-        bindtextdomain($domain, self::storage());
-        bind_textdomain_codeset($domain, 'UTF-8');
-        textdomain($domain);
+        bindtextdomain(self::$config['domain'], self::$config['storage']);
+        bind_textdomain_codeset(self::$config['domain'], 'UTF-8');
+        textdomain(self::$config['domain']);
 
         # Also, we will work with gettext/gettext library
         # because PHP gones crazy when mo files are updated
 
-        $path = dirname(self::file($session));
-        $file = $path.'/'.$domain;
+        $path = dirname(self::getFile($current));
+        $file = $path.'/'.self::$config['domain'];
 
         if (is_file($file.'.php')) {
             $translations = $file.'.php';
@@ -216,5 +174,23 @@ class Gettext
         }
 
         Translator::initGettextFunctions((new Translator())->loadTranslations($translations));
+    }
+
+    public function setLocale($current, $new)
+    {
+        if (empty($current) || !in_array($current, self::$config['locales'])) {
+            $current = self::$config['default'];
+        }
+
+        if ($new && ($new !== $current) && in_array($new, self::$config['locales'])) {
+            $current = $new;
+        }
+
+        self::$locale = $current;
+    }
+
+    public function getLocale()
+    {
+        return self::$locale;
     }
 }

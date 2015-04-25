@@ -15,7 +15,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Laravel\\Gettext\\": "src/"
+            "Laravel\\Gettext\\": "src/Laravel/Gettext/"
         }
     },
     "minimum-stability": "stable"

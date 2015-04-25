@@ -3,6 +3,8 @@
 namespace Laravel\Gettext;
 
 use Illuminate\Support\ServiceProvider;
+use Session;
+use Input;
 
 class GettextServiceProvider extends ServiceProvider
 {
@@ -20,7 +22,14 @@ class GettextServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        $this->publishes([
+            __DIR__.'/../../config/config.php' => config_path('gettext.php')
+        ]);
+
+        Gettext::setLocale(Session::get('locale'), Input::get('locale'));
         Gettext::load();
+
+        Session::set('locale', $current);
     }
 
     /**
@@ -31,7 +40,10 @@ class GettextServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app['gettext'] = $this->app->share(function($app) {
-            return new Gettext;
+            $config = config('gettext');
+            $config['storage'] = base_path(self::$storage);
+
+            Gettext::setConfig($config);
         });
     }
 
