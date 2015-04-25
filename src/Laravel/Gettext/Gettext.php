@@ -65,7 +65,7 @@ class Gettext
         $base = base_path();
         $entries = new Translations();
 
-        foreach (self::$config['dirs'] as $dir) {
+        foreach (self::$config['directories'] as $dir) {
             $dir = $base.'/'.$dir;
 
             if (!is_dir($dir)) {
