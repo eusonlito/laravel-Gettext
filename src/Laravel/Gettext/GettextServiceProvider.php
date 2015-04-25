@@ -25,11 +25,6 @@ class GettextServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../../config/config.php' => config_path('gettext.php')
         ]);
-
-        Gettext::setLocale(Session::get('locale'), Input::get('locale'));
-        Gettext::load();
-
-        Session::set('locale', $current);
     }
 
     /**
@@ -45,6 +40,11 @@ class GettextServiceProvider extends ServiceProvider
 
             Gettext::setConfig($config);
         });
+
+        Gettext::setLocale(Session::get('locale'), Input::get('locale'));
+        Gettext::load();
+
+        Session::set('locale', $current);
     }
 
     /**
