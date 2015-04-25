@@ -144,7 +144,7 @@ class Gettext
 
     public static function load()
     {
-        $locale = $self::$locale.'.UTF-8';
+        $locale = self::$locale.'.UTF-8';
 
         # IMPORTANT: locale must be installed in server!
         # sudo locale-gen es_ES.UTF-8
@@ -176,7 +176,7 @@ class Gettext
         Translator::initGettextFunctions((new Translator())->loadTranslations($translations));
     }
 
-    public function setLocale($current, $new)
+    public static function setLocale($current, $new)
     {
         if (empty($current) || !in_array($current, self::$config['locales'])) {
             $current = self::$config['default'];
@@ -189,7 +189,7 @@ class Gettext
         self::$locale = $current;
     }
 
-    public function getLocale()
+    public static function getLocale()
     {
         return self::$locale;
     }

@@ -13,7 +13,7 @@ class GettextServiceProvider extends ServiceProvider
      *
      * @var bool
      */
-    protected $defer = false;
+    protected $defer = true;
 
     /**
      * Bootstrap the application events.
@@ -34,12 +34,16 @@ class GettextServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app['gettext'] = $this->app->share(function($app) {
-            $config = config('gettext');
-            $config['storage'] = base_path(self::$storage);
+        if ($config = config('gettext')) {
+            $this->load($config);
+        }
+    }
 
-            Gettext::setConfig($config);
-        });
+    public function load(array $config)
+    {
+        $config['storage'] = base_path($config['storage']);
+
+        Gettext::setConfig($config);
 
         Gettext::setLocale(Session::get('locale'), Input::get('locale'));
         Gettext::load();
