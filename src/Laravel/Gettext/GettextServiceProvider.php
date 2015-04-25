@@ -43,6 +43,10 @@ class GettextServiceProvider extends ServiceProvider
     {
         $config['storage'] = base_path($config['storage']);
 
+        foreach ($config['directories'] as $key => $directory) {
+            $config['directories'][$key] = base_path($directory);
+        }
+
         Gettext::setConfig($config);
 
         Gettext::setLocale(Session::get('locale'), Input::get('locale'));

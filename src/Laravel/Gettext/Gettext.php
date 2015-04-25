@@ -6,10 +6,6 @@ use Exception;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
-use App;
-use Config;
-use Input;
-use Session;
 use Gettext\Extractors;
 use Gettext\Generators;
 use Gettext\Translations;
@@ -62,12 +58,9 @@ class Gettext
             '_' => '__',
         ];
 
-        $base = base_path();
         $entries = new Translations();
 
         foreach (self::$config['directories'] as $dir) {
-            $dir = $base.'/'.$dir;
-
             if (!is_dir($dir)) {
                 throw new Exception(__('Folder %s not exists. Gettext scan aborted.', $dir));
             }
@@ -114,8 +107,6 @@ class Gettext
             $entries->mergeWith(Extractors\Mo::fromFile($file));
         }
 
-        self::store($locale, $entries);
-
         return $entries;
     }
 
@@ -139,7 +130,7 @@ class Gettext
 
         self::store($locale, $entries);
 
-        return true;
+        return $entries;
     }
 
     public static function load()
