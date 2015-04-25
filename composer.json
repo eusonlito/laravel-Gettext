@@ -1,0 +1,22 @@
+{
+    "name": "laravel/gettext",
+    "keywords": ["laravel", "gettext"],
+    "description": "Simple gettext loader and parser",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Lito",
+            "email": "lito@eordes.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3",
+        "gettext/gettext": "3.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Laravel\\Gettext\\": "src/"
+        }
+    },
+    "minimum-stability": "stable"
+}
