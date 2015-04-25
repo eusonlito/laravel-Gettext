@@ -53,14 +53,6 @@ By default, gettext .po and .mo files are stored in resources/gettext/xx_XX/LC_M
 
 xx_XX is language code like `en_US`, `es_ES`, etc...
 
-### Configuration
-
-```php
-__('Here your text');
-__('Here your text with %s parameters', 1);
-__('Here your text with parameters %s and %s', 1, 2);
-```
-
 # Configuration
 
 #### app/config/gettext.php
@@ -76,7 +68,18 @@ return array(
     |
     */
 
-    'locales' => ['es_ES', 'en_US', 'it_IT', 'fr_FR'],
+    'locales' => ['en_US', 'es_ES', 'it_IT', 'fr_FR'],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Available locales
+    |--------------------------------------------------------------------------
+    |
+    | A array list with available locales to load
+    |
+    */
+
+    'default' => 'en_US',
 
     /*
     |--------------------------------------------------------------------------
@@ -94,10 +97,21 @@ return array(
     | Where the translations are stored
     |--------------------------------------------------------------------------
     |
-    | Full path is $storage/xx_XX/LC_MESSAGES/messages.XX
+    | Full path is $storage/xx_XX/LC_MESSAGES/$domain.XX
     |
     */
 
-    'storage' => 'resources/gettext'
+    'storage' => 'resources/gettext',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Store files as domain name
+    |--------------------------------------------------------------------------
+    |
+    | Full path is $storage/xx_XX/LC_MESSAGES/$domain.XX
+    |
+    */
+
+    'domain' => 'messages'
 );
 ```
