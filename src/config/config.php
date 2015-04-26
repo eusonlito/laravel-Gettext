@@ -34,7 +34,7 @@ return array(
     |
     */
 
-    'storage' => 'resources/gettext',
+    'storage' => 'storage/gettext',
 
     /*
     |--------------------------------------------------------------------------
