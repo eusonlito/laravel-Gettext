@@ -37,6 +37,10 @@ class GettextServiceProvider extends ServiceProvider
         if ($config = config('gettext')) {
             $this->load($config);
         }
+
+        $this->app['gettext'] = $this->app->share(function($app) {
+            return new Gettext;
+        });
     }
 
     public function load(array $config)
