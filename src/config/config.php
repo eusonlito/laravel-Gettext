@@ -45,5 +45,16 @@ return array(
     |
     */
 
-    'domain' => 'messages'
+    'domain' => 'messages',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Cookie name
+    |--------------------------------------------------------------------------
+    |
+    | Locale cookie name. Cookie are stored as plain, without Laravel manager
+    |
+    */
+
+    'cookie' => 'locale'
 );
