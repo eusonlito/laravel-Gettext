@@ -50,16 +50,17 @@ class GettextServiceProvider extends ServiceProvider
             $config['directories'][$key] = base_path($directory);
         }
 
+        $cookie = $config['cookie'];
+        $path = parse_url(url('/'), PHP_URL_PATH);
+
+        $_COOKIE[$cookie] = isset($_COOKIE[$cookie]) ? $_COOKIE[$cookie] : null;
+
         Gettext::setConfig($config);
 
-        $_COOKIE['locale'] = isset($_COOKIE['locale']) ? $_COOKIE['locale'] : null;
-
-        Gettext::setConfig($config);
-
-        Gettext::setLocale($_COOKIE['locale'], Input::get('locale'));
+        Gettext::setLocale($_COOKIE[$cookie], Input::get($cookie));
         Gettext::load();
 
-        setcookie('locale', $_COOKIE['locale'] = Gettext::getLocale(), (time() + 3600 * 24 * 30 * 12), url('/'));
+        setcookie($cookie, $_COOKIE[$cookie] = Gettext::getLocale(), (time() + 3600 * 24 * 30 * 12), $path);
     }
 
     /**
