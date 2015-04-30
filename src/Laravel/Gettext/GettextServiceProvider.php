@@ -60,7 +60,7 @@ class GettextServiceProvider extends ServiceProvider
         Gettext::setLocale($_COOKIE['locale'], Input::get('locale'));
         Gettext::load();
 
-        setcookie('locale', Gettext::getLocale(), 0, url('/'));
+        setcookie('locale', $_COOKIE['locale'] = Gettext::getLocale(), 0, url('/'));
     }
 
     /**
