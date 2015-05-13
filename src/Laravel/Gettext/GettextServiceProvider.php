@@ -24,6 +24,10 @@ class GettextServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../../config/config.php' => config_path('gettext.php')
         ]);
+
+        if ($config = config('gettext')) {
+            $this->load($config);
+        }
     }
 
     /**
@@ -33,10 +37,6 @@ class GettextServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        if ($config = config('gettext')) {
-            $this->load($config);
-        }
-
         $this->app['gettext'] = $this->app->share(function($app) {
             return new Gettext;
         });
