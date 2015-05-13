@@ -4,6 +4,7 @@ namespace Laravel\Gettext;
 
 use Illuminate\Support\ServiceProvider;
 use Input;
+use App;
 
 class GettextServiceProvider extends ServiceProvider
 {
@@ -61,6 +62,8 @@ class GettextServiceProvider extends ServiceProvider
         Gettext::load();
 
         setcookie($cookie, $_COOKIE[$cookie] = Gettext::getLocale(), (time() + 3600 * 24 * 30 * 12), $path);
+
+        App::setLocale(preg_replace('/_.*$/', '', $_COOKIE[$cookie]));
     }
 
     /**
