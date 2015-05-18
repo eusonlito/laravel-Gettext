@@ -9,7 +9,7 @@ Begin by installing this package through Composer.
 ```js
 {
     "require": {
-        "laravel/gettext": "0.*"
+        "eusonlito/laravel-gettext": "0.*"
     }
 }
 ```
@@ -22,12 +22,12 @@ Begin by installing this package through Composer.
 
 'providers' => [
     '...',
-    'Laravel\Gettext\GettextServiceProvider',
+    'Eusonlito\LaravelGettext\GettextServiceProvider',
 ];
 
 'aliases' => [
     '...',
-    'Gettext'    => 'Laravel\Gettext\Facade',
+    'Gettext'    => 'Eusonlito\LaravelGettext\Facade',
 ];
 ```
 
