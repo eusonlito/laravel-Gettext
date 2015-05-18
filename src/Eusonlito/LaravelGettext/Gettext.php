@@ -1,6 +1,5 @@
 <?php
-
-namespace Laravel\Gettext;
+namespace Eusonlito\LaravelGettext;
 
 use Exception;
 use RecursiveDirectoryIterator;

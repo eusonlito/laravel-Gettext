@@ -1,6 +1,5 @@
 <?php
-
-namespace Laravel\Gettext;
+namespace Eusonlito\LaravelGettext;
 
 use Illuminate\Support\ServiceProvider;
 use Input;
