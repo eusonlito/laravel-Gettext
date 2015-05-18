@@ -1,6 +1,5 @@
 <?php
-
-namespace Laravel\Gettext;
+namespace Eusonlito\LaravelGettext;
 
 use Illuminate\Support\Facades\Facade as LFacade;
 

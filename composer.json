@@ -1,5 +1,5 @@
 {
-    "name": "laravel/gettext",
+    "name": "eusonlito/laravel-gettext",
     "keywords": ["laravel", "gettext"],
     "description": "Simple gettext loader and parser",
     "license": "MIT",
@@ -15,7 +15,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Laravel\\Gettext\\": "src/Laravel/Gettext/"
+            "Eusonlito\\LaravelGettext\\": "src/Eusonlito/LaravelGettext/"
         }
     },
     "minimum-stability": "stable"
