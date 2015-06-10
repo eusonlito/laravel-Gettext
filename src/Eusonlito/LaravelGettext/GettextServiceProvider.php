@@ -37,7 +37,7 @@ class GettextServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app['gettext'] = $this->app->share(function($app) {
+        $this->app->singleton('Gettext', function($app) {
             return new Gettext;
         });
     }
