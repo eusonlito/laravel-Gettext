@@ -51,7 +51,7 @@ class GettextServiceProvider extends ServiceProvider
         }
 
         $cookie = $config['cookie'];
-        $path = parse_url(url('/'), PHP_URL_PATH);
+        $path = parse_url(url('/'), PHP_URL_PATH) ?: '/';
 
         $_COOKIE[$cookie] = isset($_COOKIE[$cookie]) ? $_COOKIE[$cookie] : null;
 
