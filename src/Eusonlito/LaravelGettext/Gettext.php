@@ -140,8 +140,17 @@ class Gettext
         # sudo locale-gen es_ES.UTF-8
         # sudo update-locale
 
-        putenv('LC_ALL='.$locale);
-        setlocale(LC_ALL, $locale);
+        putenv('LANG='.$locale);
+        putenv('LANGUAGE='.$locale);
+        putenv('LC_MESSAGES='.$locale);
+        putenv('LC_PAPER='.$locale);
+        putenv('LC_TIME='.$locale);
+        putenv('LC_MONETARY='.$locale);
+
+        setlocale(LC_MESSAGES, $locale);
+        setlocale(LC_COLLATE, $locale);
+        setlocale(LC_TIME, $locale);
+        setlocale(LC_MONETARY, $locale);
 
         bindtextdomain(self::$config['domain'], self::$config['storage']);
         bind_textdomain_codeset(self::$config['domain'], 'UTF-8');
