@@ -25,7 +25,7 @@ class GettextServiceProvider extends ServiceProvider
             __DIR__.'/../../config/config.php' => config_path('gettext.php')
         ]);
 
-        if ($config = config('gettext') && isset($config['storage'])) {
+        if (($config = config('gettext')) && isset($config['storage'])) {
             $this->load($config);
         }
     }
