@@ -5,6 +5,7 @@ use Exception;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
+use Gettext\GettextTranslator;
 use Gettext\Extractors;
 use Gettext\Generators;
 use Gettext\Translations;
@@ -12,11 +13,20 @@ use Gettext\Translator;
 
 class Gettext
 {
-    private static $config = [];
     private static $locale;
+    private static $config = array();
+    private static $formats = array('php', 'mo', 'po');
 
     public static function setConfig(array $config)
     {
+        if (!isset($config['native'])) {
+            $config['native'] = false;
+        }
+
+        if (!isset($config['formats'])) {
+            $config['formats'] = self::$formats;
+        }
+
         self::$config = $config;
     }
 
@@ -81,7 +91,7 @@ class Gettext
         $directory = new RecursiveDirectoryIterator($dir, RecursiveDirectoryIterator::SKIP_DOTS);
         $iterator = new RecursiveIteratorIterator($directory, RecursiveIteratorIterator::LEAVES_ONLY);
 
-        $files = [];
+        $files = array();
 
         foreach ($iterator as $fileinfo) {
             $name = $fileinfo->getPathname();
@@ -152,26 +162,76 @@ class Gettext
         setlocale(LC_TIME, $locale);
         setlocale(LC_MONETARY, $locale);
 
+        if (self::$config['native']) {
+            self::loadNative($locale);
+        } else {
+            self::loadParsed($locale);
+        }
+    }
+
+    private static function loadNative($locale)
+    {
+        $translator = new GettextTranslator();
+        $translator->setLanguage($locale);
+        $translator->loadDomain(self::$config['domain'], self::$config['storage']);
+
+        bind_textdomain_codeset(self::$config['domain'], 'UTF-8');
+
+        $translator->register();
+    }
+
+    private static function loadParsed($locale)
+    {
         bindtextdomain(self::$config['domain'], self::$config['storage']);
         bind_textdomain_codeset(self::$config['domain'], 'UTF-8');
         textdomain(self::$config['domain']);
 
         # Also, we will work with gettext/gettext library
         # because PHP gones crazy when mo files are updated
-        $path = dirname(self::getFile(self::$locale));
-        $file = $path.'/'.self::$config['domain'];
+        $path = dirname(self::getFile(self::$locale)).'/'.self::$config['domain'];
 
-        if (is_file($file.'.php')) {
-            $translations = $file.'.php';
-        } elseif (is_file($file.'.mo')) {
-            $translations = Translations::fromMoFile($file.'.mo');
-        } elseif (is_file($file.'.po')) {
-            $translations = Translations::fromPoFile($file.'.po');
-        } else {
+        $translations = null;
+
+        foreach (self::$config['formats'] as $format) {
+            if ($translations = self::loadFormat($format, $file)) {
+                break;
+            }
+        }
+
+        if ($translations === null) {
             $translations = new Translations();
         }
 
         Translator::initGettextFunctions((new Translator())->loadTranslations($translations));
+    }
+
+    private static function loadFormat($format, $file)
+    {
+        switch ($format) {
+            case 'mo':
+                return self::loadFormatMo($file);
+            case 'po':
+                return self::loadFormatPo($file);
+            case 'php':
+                return self::loadFormatPHP($file);
+        }
+
+        throw new Exception(sprintf('Format %s is not available', $format));
+    }
+
+    private static function loadFormatMo($file)
+    {
+        return is_file($file.'.mo') ? Translations::fromMoFile($file.'.mo') : null;
+    }
+
+    private static function loadFormatPo($file)
+    {
+        return is_file($file.'.po') ? Translations::fromPoFile($file.'.po') : null;
+    }
+
+    private static function loadFormatPHP($file)
+    {
+        return is_file($file.'.php') ? ($file.'.php') : null;
     }
 
     public static function setLocale($current, $new)
