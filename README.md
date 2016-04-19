@@ -1,4 +1,4 @@
-# Laravel 5 Gettext
+# Laravel 5.0 Gettext
 
 With this package you can load/parse/store gettext strings
 
@@ -9,7 +9,7 @@ Begin by installing this package through Composer.
 ```js
 {
     "require": {
-        "eusonlito/laravel-gettext": "0.*"
+        "eusonlito/laravel-gettext": "1.1.*"
     }
 }
 ```
