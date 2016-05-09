@@ -2,8 +2,8 @@
 namespace Eusonlito\LaravelGettext;
 
 use Illuminate\Support\ServiceProvider;
-use Input;
-use App;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Input;
 
 class GettextServiceProvider extends ServiceProvider
 {
