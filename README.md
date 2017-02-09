@@ -115,7 +115,7 @@ return array(
     |
     */
 
-    'native' => false,
+    'native' => true,
 
     /*
     |--------------------------------------------------------------------------
@@ -128,7 +128,7 @@ return array(
     |
     */
 
-    'functions' => true,
+    'functions' => false,
 
     /*
     |--------------------------------------------------------------------------
@@ -153,4 +153,55 @@ return array(
 
     'cookie' => 'locale'
 );
+```
+
+# Using your own Gettext function/helper
+
+If you want to create your alternative gettext function:
+
+```php
+
+// config/app.php
+
+'providers' => [
+    '...',
+    'Eusonlito\LaravelGettext\GettextServiceProvider',
+    'App\Providers\GettextServiceProvider',
+];
+```
+
+Create the file:
+
+```php
+
+// app/Providers/GettextServiceProvider.php
+
+<?php
+namespace App\Providers {
+    use Illuminate\Support\ServiceProvider;
+
+    class GettextServiceProvider extends ServiceProvider
+    {
+        public function register()
+        {
+        }
+    }
+}
+
+namespace {
+    // Change "txt" with your custom gettext function name
+    function txt($original)
+    {
+        $text = app('gettext')->getTranslator()->gettext($original);
+
+        if (func_num_args() === 1) {
+            return $text;
+        }
+
+        $args = array_slice(func_get_args(), 1);
+
+        return is_array($args[0]) ? strtr($text, $args[0]) : vsprintf($text, $args);
+    }
+}
+
 ```
