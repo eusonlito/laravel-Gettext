@@ -49,7 +49,7 @@ return array(
 
     /*
     |--------------------------------------------------------------------------
-    | Use native gettext functions
+    | Use PHP native gettext functions
     |--------------------------------------------------------------------------
     |
     | Are faster than open files from PHP. If you have enabled the php-gettext
@@ -58,6 +58,19 @@ return array(
     */
 
     'native' => false,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Use package gettext methods
+    |--------------------------------------------------------------------------
+    |
+    | Enable gettext methods: __, noop__, n__, p__, d__, dp__, np__, dnp__
+    |
+    | Reference: https://github.com/oscarotero/Gettext/blob/master/src/translator_functions.php
+    |
+    */
+
+    'functions' => true,
 
     /*
     |--------------------------------------------------------------------------

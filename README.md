@@ -9,7 +9,7 @@ Begin by installing this package through Composer.
 ```js
 {
     "require": {
-        "eusonlito/laravel-gettext": "1.1.*"
+        "eusonlito/laravel-gettext": "2.0.*"
     }
 }
 ```
@@ -116,6 +116,19 @@ return array(
     */
 
     'native' => false,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Use package gettext methods
+    |--------------------------------------------------------------------------
+    |
+    | Enable gettext methods: __, noop__, n__, p__, d__, dp__, np__, dnp__
+    |
+    | Reference: https://github.com/oscarotero/Gettext/blob/master/src/translator_functions.php
+    |
+    */
+
+    'functions' => true,
 
     /*
     |--------------------------------------------------------------------------

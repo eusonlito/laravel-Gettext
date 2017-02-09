@@ -24,10 +24,6 @@ class GettextServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../../config/config.php' => config_path('gettext.php')
         ]);
-
-        if (($config = config('gettext')) && isset($config['storage'])) {
-            $this->load($config);
-        }
     }
 
     /**
@@ -38,7 +34,7 @@ class GettextServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->singleton('gettext', function($app) {
-            return new Gettext;
+            return $this->load(config('gettext'));
         });
     }
 
@@ -55,14 +51,14 @@ class GettextServiceProvider extends ServiceProvider
 
         $_COOKIE[$cookie] = isset($_COOKIE[$cookie]) ? $_COOKIE[$cookie] : null;
 
-        Gettext::setConfig($config);
+        $gettext = new Gettext($config);
 
-        Gettext::setLocale($_COOKIE[$cookie], Input::get($cookie));
-        Gettext::load();
+        $gettext->setLocale($_COOKIE[$cookie], Input::get($cookie));
+        $gettext->load();
 
-        setcookie($cookie, $_COOKIE[$cookie] = Gettext::getLocale(), (time() + 3600 * 24 * 30 * 12), $path);
+        setcookie($cookie, $_COOKIE[$cookie] = $gettext->getLocale(), (time() + 3600 * 24 * 30 * 12), $path);
 
-        App::setLocale(preg_replace('/_.*$/', '', $_COOKIE[$cookie]));
+        return $gettext;
     }
 
     /**

@@ -13,40 +13,50 @@ use Gettext\Translator;
 
 class Gettext
 {
-    private static $locale;
-    private static $config = array();
-    private static $formats = array('php', 'mo', 'po');
+    private $locale;
+    private $config = array();
+    private $formats = array('php', 'mo', 'po');
+    private $translator;
 
-    public static function setConfig(array $config)
+    public function __construct(array $config)
+    {
+        $this->setConfig($config);
+    }
+
+    public function setConfig(array $config)
     {
         if (!isset($config['native'])) {
             $config['native'] = false;
         }
 
-        if (!isset($config['formats'])) {
-            $config['formats'] = self::$formats;
+        if (!isset($config['functions'])) {
+            $config['functions'] = true;
         }
 
-        self::$config = $config;
+        if (!isset($config['formats'])) {
+            $config['formats'] = $this->formats;
+        }
+
+        $this->config = $config;
     }
 
-    private static function getFile($locale)
+    private function getFile($locale)
     {
-        return sprintf('%s/%s/LC_MESSAGES/%s.', self::$config['storage'], $locale, self::$config['domain']);
+        return sprintf('%s/%s/LC_MESSAGES/%s.', $this->config['storage'], $locale, $this->config['domain']);
     }
 
-    private static function getCache($locale)
+    private function getCache($locale)
     {
-        if (is_file($file = self::getFile($locale).'po')) {
+        if (is_file($file = $this->getFile($locale).'po')) {
             return Extractors\Po::fromFile($file);
         }
 
         return false;
     }
 
-    private static function store($locale, $entries)
+    private function store($locale, $entries)
     {
-        $file = self::getFile($locale);
+        $file = $this->getFile($locale);
         $dir = dirname($file);
 
         if (!is_dir($dir)) {
@@ -60,7 +70,7 @@ class Gettext
         return $entries;
     }
 
-    private static function scan()
+    private function scan()
     {
         Extractors\PhpCode::$functions = [
             '__' => '__',
@@ -69,12 +79,12 @@ class Gettext
 
         $entries = new Translations();
 
-        foreach (self::$config['directories'] as $dir) {
+        foreach ($this->config['directories'] as $dir) {
             if (!is_dir($dir)) {
                 throw new Exception(__('Folder %s not exists. Gettext scan aborted.', $dir));
             }
 
-            foreach (self::scanDir($dir) as $file) {
+            foreach ($this->scanDir($dir) as $file) {
                 if (strstr($file, '.blade.php')) {
                     $entries->mergeWith(Extractors\Blade::fromFile($file));
                 } elseif (strstr($file, '.php')) {
@@ -86,7 +96,7 @@ class Gettext
         return $entries;
     }
 
-    private static function scanDir($dir)
+    private function scanDir($dir)
     {
         $directory = new RecursiveDirectoryIterator($dir, RecursiveDirectoryIterator::SKIP_DOTS);
         $iterator = new RecursiveIteratorIterator($directory, RecursiveIteratorIterator::LEAVES_ONLY);
@@ -104,28 +114,28 @@ class Gettext
         return $files;
     }
 
-    public static function getEntries($locale, $refresh = true)
+    public function getEntries($locale, $refresh = true)
     {
-        if (empty($refresh) && ($cache = self::getCache($locale))) {
+        if (empty($refresh) && ($cache = $this->getCache($locale))) {
             return $cache;
         }
 
-        $entries = clone self::scan();
+        $entries = clone $this->scan();
 
-        if (is_file($file = self::getFile($locale).'mo')) {
+        if (is_file($file = $this->getFile($locale).'mo')) {
             $entries->mergeWith(Extractors\Mo::fromFile($file));
         }
 
         return $entries;
     }
 
-    public static function setEntries($locale, $translations)
+    public function setEntries($locale, $translations)
     {
         if (empty($translations)) {
             return true;
         }
 
-        $entries = self::getCache($locale) ?: (new Translations());
+        $entries = $this->getCache($locale) ?: (new Translations());
 
         foreach ($translations as $msgid => $msgstr) {
             $msgid = urldecode($msgid);
@@ -137,14 +147,14 @@ class Gettext
             $entry->setTranslation($msgstr);
         }
 
-        self::store($locale, $entries);
+        $this->store($locale, $entries);
 
         return $entries;
     }
 
-    public static function load()
+    public function load()
     {
-        $locale = self::$locale.'.UTF-8';
+        $locale = $this->locale.'.UTF-8';
 
         # IMPORTANT: locale must be installed in server!
         # sudo locale-gen es_ES.UTF-8
@@ -162,39 +172,43 @@ class Gettext
         setlocale(LC_TIME, $locale);
         setlocale(LC_MONETARY, $locale);
 
-        if (self::$config['native']) {
-            self::loadNative($locale);
+        if ($this->config['native']) {
+            $this->loadNative($locale);
         } else {
-            self::loadParsed($locale);
+            $this->loadParsed($locale);
         }
     }
 
-    private static function loadNative($locale)
+    private function loadNative($locale)
     {
         $translator = new GettextTranslator();
         $translator->setLanguage($locale);
-        $translator->loadDomain(self::$config['domain'], self::$config['storage']);
+        $translator->loadDomain($this->config['domain'], $this->config['storage']);
 
-        bind_textdomain_codeset(self::$config['domain'], 'UTF-8');
+        bind_textdomain_codeset($this->config['domain'], 'UTF-8');
 
-        $translator->register();
+        if ($this->config['functions']) {
+            $translator->register();
+        }
+
+        $this->translator = $translator;
     }
 
-    private static function loadParsed($locale)
+    private function loadParsed($locale)
     {
         # Also, we will work with gettext/gettext library
         # because PHP gones crazy when mo files are updated
 
-        bindtextdomain(self::$config['domain'], self::$config['storage']);
-        bind_textdomain_codeset(self::$config['domain'], 'UTF-8');
-        textdomain(self::$config['domain']);
+        bindtextdomain($this->config['domain'], $this->config['storage']);
+        bind_textdomain_codeset($this->config['domain'], 'UTF-8');
+        textdomain($this->config['domain']);
 
-        $file = dirname(self::getFile(self::$locale)).'/'.self::$config['domain'];
+        $file = dirname($this->getFile($this->locale)).'/'.$this->config['domain'];
 
         $translations = null;
 
-        foreach (self::$config['formats'] as $format) {
-            if ($translations = self::loadFormat($format, $file)) {
+        foreach ($this->config['formats'] as $format) {
+            if ($translations = $this->loadFormat($format, $file)) {
                 break;
             }
         }
@@ -203,53 +217,64 @@ class Gettext
             $translations = new Translations();
         }
 
-        Translator::initGettextFunctions((new Translator())->loadTranslations($translations));
+        $this->translator = (new Translator())->loadTranslations($translations);
+
+        if ($this->config['functions']) {
+            Translator::initGettextFunctions($this->translator);
+        }
     }
 
-    private static function loadFormat($format, $file)
+    private function loadFormat($format, $file)
     {
         switch ($format) {
             case 'mo':
-                return self::loadFormatMo($file);
+                return $this->loadFormatMo($file);
+
             case 'po':
-                return self::loadFormatPo($file);
+                return $this->loadFormatPo($file);
+
             case 'php':
-                return self::loadFormatPHP($file);
+                return $this->loadFormatPHP($file);
         }
 
         throw new Exception(sprintf('Format %s is not available', $format));
     }
 
-    private static function loadFormatMo($file)
+    private function loadFormatMo($file)
     {
         return is_file($file.'.mo') ? Translations::fromMoFile($file.'.mo') : null;
     }
 
-    private static function loadFormatPo($file)
+    private function loadFormatPo($file)
     {
         return is_file($file.'.po') ? Translations::fromPoFile($file.'.po') : null;
     }
 
-    private static function loadFormatPHP($file)
+    private function loadFormatPHP($file)
     {
         return is_file($file.'.php') ? ($file.'.php') : null;
     }
 
-    public static function setLocale($current, $new)
+    public function setLocale($current, $new)
     {
-        if (empty($current) || !in_array($current, self::$config['locales'])) {
-            $current = self::$config['locales'][0];
+        if (empty($current) || !in_array($current, $this->config['locales'])) {
+            $current = $this->config['locales'][0];
         }
 
-        if ($new && ($new !== $current) && in_array($new, self::$config['locales'])) {
+        if ($new && ($new !== $current) && in_array($new, $this->config['locales'])) {
             $current = $new;
         }
 
-        self::$locale = $current;
+        $this->locale = $current;
     }
 
-    public static function getLocale()
+    public function getLocale()
     {
-        return self::$locale;
+        return $this->locale;
+    }
+
+    public function getTranslator()
+    {
+        return $this->translator;
     }
 }
