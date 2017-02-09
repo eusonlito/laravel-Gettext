@@ -1,4 +1,4 @@
-# Laravel 5.0 Gettext
+# Laravel 5.4 Gettext
 
 With this package you can load/parse/store gettext strings
 
@@ -35,7 +35,7 @@ Now you have a ```Gettext``` facade available.
 
 Publish the config file:
 
-```
+```bash
 php artisan vendor:publish
 ```
 
