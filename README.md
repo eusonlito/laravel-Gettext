@@ -87,10 +87,15 @@ namespace App\Providers {
 }
 
 namespace {
-    // Change "txt" with your custom gettext function name
     function txt($original)
     {
-        $text = app('gettext')->getTranslator()->gettext($original);
+        static $translator;
+
+        if (empty($translator)) {
+            $translator = app('gettext')->getTranslator();
+        }
+
+        $text = $translator->gettext($original);
 
         if (func_num_args() === 1) {
             return $text;
@@ -101,7 +106,6 @@ namespace {
         return is_array($args[0]) ? strtr($text, $args[0]) : vsprintf($text, $args);
     }
 }
-
 ```
 
 # Configuration
