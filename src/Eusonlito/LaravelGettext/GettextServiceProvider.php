@@ -56,6 +56,10 @@ class GettextServiceProvider extends ServiceProvider
 
         setcookie($cookie, $_COOKIE[$cookie] = $gettext->getLocale(), (time() + 3600 * 24 * 30 * 12), $path);
 
+        $this->app->singleton('gettext', function() use ($gettext) {
+            return $gettext;
+        });
+
         return $gettext;
     }
 
