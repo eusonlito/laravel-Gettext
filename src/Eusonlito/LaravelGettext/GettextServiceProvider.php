@@ -38,6 +38,10 @@ class GettextServiceProvider extends ServiceProvider
 
     public function load(array $config)
     {
+	if (empty($config)) {
+		return;
+	}
+
         $config['storage'] = base_path($config['storage']);
 
         foreach ($config['directories'] as $key => $directory) {
