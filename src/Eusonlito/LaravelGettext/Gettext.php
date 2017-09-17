@@ -167,10 +167,25 @@ class Gettext
         putenv('LC_TIME='.$locale);
         putenv('LC_MONETARY='.$locale);
 
-        setlocale(LC_MESSAGES, $locale);
-        setlocale(LC_COLLATE, $locale);
-        setlocale(LC_TIME, $locale);
-        setlocale(LC_MONETARY, $locale);
+        if (defined('LC_MESSAGES')) {
+            setlocale(LC_MESSAGES, $locale);
+        }
+
+        if (defined('LC_COLLATE')) {
+            setlocale(LC_COLLATE, $locale);
+        }
+
+        if (defined('LC_TIME')) {
+            setlocale(LC_TIME, $locale);
+        }
+
+        if (defined('LC_MONETARY')) {
+            setlocale(LC_MONETARY, $locale);
+        }
+
+        if (!defined('LC_MESSAGES') && !defined('LC_COLLATE') && !defined('LC_TIME') && !defined('LC_MONETARY')) {
+            setlocale(LC_ALL, $locale);
+        }
 
         if ($this->config['native']) {
             $this->loadNative($locale);
