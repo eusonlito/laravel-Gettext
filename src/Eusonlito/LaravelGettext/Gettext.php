@@ -167,22 +167,23 @@ class Gettext
         putenv('LC_TIME='.$locale);
         putenv('LC_MONETARY='.$locale);
 
-        if(defined('LC_MESSAGES')) {
+        if (defined('LC_MESSAGES')) {
             setlocale(LC_MESSAGES, $locale);
         }
-        if(defined('LC_COLLATE')) {
+
+        if (defined('LC_COLLATE')) {
             setlocale(LC_COLLATE, $locale);
         }
-        if(defined('LC_TIME')) {
+
+        if (defined('LC_TIME')) {
             setlocale(LC_TIME, $locale);
         }
-        if(defined('LC_MONETARY')) {
+
+        if (defined('LC_MONETARY')) {
             setlocale(LC_MONETARY, $locale);
         }
-        if(
-            !defined('LC_MESSAGES') && !defined('LC_COLLATE') &&
-            !defined('LC_TIME') && !defined('LC_MONETARY')
-        ) {
+
+        if (!defined('LC_MESSAGES') && !defined('LC_COLLATE') && !defined('LC_TIME') && !defined('LC_MONETARY')) {
             setlocale(LC_ALL, $locale);
         }
 
