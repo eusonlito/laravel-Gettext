@@ -211,13 +211,6 @@ class Gettext
 
     private function loadParsed($locale)
     {
-        # Also, we will work with gettext/gettext library
-        # because PHP gones crazy when mo files are updated
-
-        bindtextdomain($this->config['domain'], $this->config['storage']);
-        bind_textdomain_codeset($this->config['domain'], 'UTF-8');
-        textdomain($this->config['domain']);
-
         $file = dirname($this->getFile($this->locale)).'/'.$this->config['domain'];
 
         $translations = null;
