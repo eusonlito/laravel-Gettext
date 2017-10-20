@@ -17,5 +17,15 @@
         "psr-4": {
             "Eusonlito\\LaravelGettext\\": "src/Eusonlito/LaravelGettext/"
         }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Eusonlito\\LaravelGettext\\GettextServiceProvider"
+            ],
+            "aliases": {
+                "Gettext": "Eusonlito\\LaravelGettext\\Facade"
+            }
+        }
     }
 }
