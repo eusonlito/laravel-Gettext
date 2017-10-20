@@ -16,6 +16,8 @@ Begin by installing this package through Composer.
 
 ### Laravel installation
 
+> Note: If you are using Laravel 5.5 or above, the next steps for providers and aliases are unnecessaries. laravel-Gettext supports Laravel new [Package Discovery](https://laravel.com/docs/master/packages#package-discovery).
+
 ```php
 
 // config/app.php
