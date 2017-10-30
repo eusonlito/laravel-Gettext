@@ -72,7 +72,7 @@ class Gettext
 
     private function scan()
     {
-        Extractors\PhpCode::$functions = [
+        Extractors\PhpCode::$functions += [
             '__' => '__',
             '_' => '__',
         ];
