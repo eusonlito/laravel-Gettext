@@ -2,8 +2,6 @@
 namespace Eusonlito\LaravelGettext;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Input;
 
 class GettextServiceProvider extends ServiceProvider
 {
@@ -38,9 +36,9 @@ class GettextServiceProvider extends ServiceProvider
 
     public function load(array $config)
     {
-	if (empty($config)) {
-		return;
-	}
+        if (empty($config)) {
+            return;
+        }
 
         $config['storage'] = base_path($config['storage']);
 
@@ -55,7 +53,7 @@ class GettextServiceProvider extends ServiceProvider
 
         $gettext = new Gettext($config);
 
-        $gettext->setLocale($_COOKIE[$cookie], Input::get($cookie));
+        $gettext->setLocale($_COOKIE[$cookie], request()->input($cookie));
         $gettext->load();
 
         setcookie($cookie, $_COOKIE[$cookie] = $gettext->getLocale(), (time() + 3600 * 24 * 30 * 12), $path);
